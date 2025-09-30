@@ -202,7 +202,6 @@ const formatFollowUpLabel = (value: string) => {
     day: "numeric",
   })}`;
 };
-
 const slugify = (value: string) =>
   value
     .toLowerCase()
@@ -288,6 +287,7 @@ export default function IntakeWizardPage() {
   const [handoffStatus, setHandoffStatus] = useState<"idle" | "success" | "error">("idle");
   const hasHydrated = useRef(false);
   const skipAutosave = useRef(false);
+  const hasLocalEdits = useRef(false);
 
   const { data: remoteDraft, isLoading: isDraftLoading } = useIntakeDraft();
   const updateDraftMutation = useUpdateIntakeDraft();
@@ -309,7 +309,7 @@ export default function IntakeWizardPage() {
 
     const matchesCurrent = draftsAreEqual(formState, remoteDraft);
 
-    if (!hasHydrated.current || (!matchesCurrent && !isDraftSaving)) {
+    if (!hasHydrated.current || (!matchesCurrent && !isDraftSaving && !hasLocalEdits.current)) {
       skipAutosave.current = true;
       setFormState(remoteDraft);
       hasHydrated.current = true;
@@ -318,6 +318,7 @@ export default function IntakeWizardPage() {
       if (handoffStatus !== "idle") {
         setHandoffStatus("idle");
       }
+      hasLocalEdits.current = false;
     }
   }, [remoteDraft, formState, isDraftLoading, isDraftSaving, handoffStatus]);
   useEffect(() => {
@@ -337,6 +338,7 @@ export default function IntakeWizardPage() {
         onSuccess: () => {
           setAutosaveStatus("saved");
           setLastSavedAt(new Date().toLocaleTimeString());
+          hasLocalEdits.current = false;
         },
         onError: () => {
           setAutosaveStatus("idle");
@@ -401,6 +403,7 @@ export default function IntakeWizardPage() {
     if (handoffStatus !== "idle") {
       setHandoffStatus("idle");
     }
+    hasLocalEdits.current = true;
   };
 
   const goToNextStep = () => {
@@ -456,6 +459,7 @@ export default function IntakeWizardPage() {
         setHandoffStatus("idle");
         setAutosaveStatus("saved");
         setLastSavedAt(new Date().toLocaleTimeString());
+        hasLocalEdits.current = false;
       },
     });
   };

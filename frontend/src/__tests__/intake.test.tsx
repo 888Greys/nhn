@@ -38,30 +38,25 @@ describe("Intake wizard", () => {
     const primaryGoalSelect = await screen.findByLabelText(/Primary objective/i);
     await userEvent.selectOptions(primaryGoalSelect, "succession");
     await waitFor(() => expect(primaryGoalSelect).toHaveValue("succession"));
-    await waitFor(
-      () => expect(screen.getByRole("heading", { name: /Asset inventory/i })).toBeInTheDocument(),
+
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+
+    const estateValueInput = await screen.findByLabelText(
+      /Estimated estate value/i,
+      {},
       { timeout: 4000 },
     );
-
-    const estateValueInput = await screen.findByLabelText(/Estimated estate value/i, {}, { timeout: 4000 });
     await userEvent.type(estateValueInput, "12.5M USD");
     await waitFor(() => expect(estateValueInput).toHaveValue("12.5M USD"));
-    await userEvent.type(await screen.findByLabelText(/Number of properties/i), "3");
     const propertyCountInput = await screen.findByLabelText(/Number of properties/i);
+    await userEvent.clear(propertyCountInput);
     await userEvent.type(propertyCountInput, "3");
-    await waitFor(() => expect(propertyCountInput).toHaveValue("3"));
+    await waitFor(() => expect(propertyCountInput).toHaveValue(3));
 
     const trustStatusSelect = await screen.findByLabelText(/Trust status/i);
     await userEvent.selectOptions(trustStatusSelect, "executed");
     await waitFor(() => expect(trustStatusSelect).toHaveValue("executed"));
     await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
-    await waitFor(
-      () =>
-        expect(
-          screen.getByRole("heading", { name: /Directives & succession/i }),
-        ).toBeInTheDocument(),
-      { timeout: 4000 },
-    );
 
     const guardianPreferenceInput = await screen.findByLabelText(
       /Guardian preference/i,
@@ -70,7 +65,7 @@ describe("Intake wizard", () => {
     );
     await userEvent.type(guardianPreferenceInput, "Appoint eldest sibling");
     await waitFor(() => expect(guardianPreferenceInput).toHaveValue("Appoint eldest sibling"));
-    await userEvent.type(
+
     const successionNotesInput = await screen.findByLabelText(/Succession considerations/i);
     await userEvent.type(successionNotesInput, "Include new grandchild");
     await waitFor(() => expect(successionNotesInput).toHaveValue("Include new grandchild"));

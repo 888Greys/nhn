@@ -52,6 +52,7 @@ npm run format:check       # Prettier verification
 
 ## Next Steps
 
-- Replace mocked services with live API endpoints for drafts and review queues.
-- Extend TanStack Query mutations for collaborative workflows and error resurfacing.
-- Add accessibility snapshots in Storybook and expand Vitest coverage as new flows arrive.
+- Stand up the Python deepagents/ADK backend and replace the mocked intake/review services with real API calls.
+- Harden async intake wizard tests (act warnings, timing) and add regression coverage around autosave + cross-tab sync.
+- Layer richer error/loading states across dashboard cells and workspace handoff flows.
+- Expand Storybook with accessibility snapshots and interaction stories for dashboard cards and review queue filters.
